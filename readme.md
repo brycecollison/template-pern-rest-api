@@ -6,6 +6,7 @@ Install node modules with `npm i`.
 Ensure environment variables are configured correctly for your project in provided .env or create a .env.local and set values.
 
 *The next two steps are only necessary if you want to use Prisma. You can also write queries to your db manually in endpoints*
+
 Pull database schema into schema.prisma with `npx prisma db pull`.
 Generate a new prisma client with `npx prisma generate`.
 
