@@ -1,3 +1,4 @@
+// initialize access to environment variables
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -9,6 +10,7 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+// decrypt cookies with secret env var
 app.use(cookieParser(process.env.SESSION_SECRET));
 
 // cors middleware config
@@ -17,12 +19,13 @@ app.use(
     origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: "GET,PUT,POST,DELETE",
+    // set secure to true if in production environment
     secure: process.env.ENV === "production" ? true : false,
+    // set samesite to 'none' if in production environment
     sameSite: process.env.ENV === "production" ? "none" : "lax",
   })
 );
 
-// legacy pg connection setup
 // pg db store setup
 // documentation: https://www.npmjs.com/package/connect-pg-simple
 const pgSession = require("connect-pg-simple")(session);
@@ -89,7 +92,7 @@ app.use(
 app.use("/", bodyParser.json());
 app.use("/", bodyParser.urlencoded({ extended: true }));
 
-const apiRouter = require("./api/api");
+const apiRouter = require("./api");
 app.use("/", apiRouter);
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
