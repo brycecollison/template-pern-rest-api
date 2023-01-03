@@ -13,5 +13,5 @@
 ### Environment Variables
 - ENV: 'development' or 'production'
 - FRONTEND_URL: url of the client, used in Allow-Origin access control headers
-- DB_URL: connection string for PostgreSQL database
+- DB_URL: connection string for database
 - SESSION_SECRET: user-defined secret string, used to encrypt and decrypt cookies with cookie-parser
