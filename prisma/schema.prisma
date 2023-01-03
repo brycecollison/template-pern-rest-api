@@ -4,5 +4,5 @@ generator client {
 
 datasource db {
   provider = "postgres" // change to "mysql" if connecting to MySQL db
-  url      = env("PG_DB_URL")
+  url      = env("DB_URL")
 }
