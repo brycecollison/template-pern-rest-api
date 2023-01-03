@@ -60,6 +60,7 @@ apiRouter.post("/login", async (req, res) => {
       .send({ message: "Username or password missing in req body" });
   }
 
+  // will only work if you have prisma configured with a schema called "users"
   const user = await prisma.users.findUnique({
     where: {
       username: username,
@@ -95,11 +96,11 @@ apiRouter.post("/login", async (req, res) => {
 
 // Cookies library needed to enable destruction of connect.sid cookie on client side
 const Cookies = require("js-cookie");
+
 // logout endpoint
 apiRouter.post("/logout", (req, res) => {
   req.session.destroy((e) => console.log(e));
   Cookies.remove("connect.sid");
-  // console.log(Cookies.get());
   res.status(200).json({ url: `${process.env.FRONTEND_URL}/` });
 });
 
