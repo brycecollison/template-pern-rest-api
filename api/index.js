@@ -3,10 +3,7 @@ const apiRouter = express.Router();
 const bcrypt = require("bcrypt");
 
 // import routers
-const usersRouter = require("./users");
-const dishesRouter = require("./dishes");
-const appliancesRouter = require("./appliances");
-const mealsRouter = require("./meals");
+const exampleRouter = require("./example");
 
 // prisma setup
 const { PrismaClient } = require("@prisma/client");
@@ -14,16 +11,11 @@ const { PrismaClient } = require("@prisma/client");
 // initialize prisma client
 const prisma = new PrismaClient();
 
-// legacy PG setup
-// import pool config for auth check middleware
-// const pool = require("../db");
-
 // api info endpoint
 apiRouter.get("/", async (req, res) => {
-  // console.log(`auth status: ${req.session.authenticated}`);
-
+  // send authentication status, admin, and userId data
   res.json({
-    info: "REST API for meal planner",
+    info: "example REST API built on express and Node",
     authenticated: req.session.authenticated
       ? req.session.authenticated
       : false,
@@ -34,7 +26,6 @@ apiRouter.get("/", async (req, res) => {
 
 // authentication verification middleware
 async function checkAuthentication(req, res, next) {
-  // console.log("checking auth");
   const session = req.session;
 
   if (session.authenticated === true) {
@@ -47,7 +38,6 @@ async function checkAuthentication(req, res, next) {
 }
 
 async function checkAdmin(req, res, next) {
-  // console.log("checking auth");
   const session = req.session;
 
   if (session.user.admin === true) {
@@ -63,9 +53,6 @@ async function checkAdmin(req, res, next) {
 apiRouter.post("/login", async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   const { username, password } = req.body;
-  // console.log(
-  //   `username in login endpoint: ${username} | password in login endpoint: ${password}`
-  // );
 
   if (!username || !password) {
     res
@@ -79,19 +66,14 @@ apiRouter.post("/login", async (req, res) => {
     },
   });
 
-  // console.log(user);
-
   if (user === null) {
-    // console.log("no matching user found");
     res.status(404).send({ message: "User not found" });
   } else {
     try {
       const matchedPassword = await bcrypt.compare(password, user.password);
       if (!matchedPassword) {
-        // console.log("no pass match");
         res.status(401).send({ message: "Authentication error" });
       } else if (matchedPassword) {
-        // console.log("login successful");
         req.session.authenticated = true;
         req.session.user = {
           userId: user.id,
@@ -104,7 +86,6 @@ apiRouter.post("/login", async (req, res) => {
           admin: req.session.user.admin,
           userId: user.id,
         });
-        console.log(req.session);
       }
     } catch (e) {
       console.log(e);
@@ -112,6 +93,7 @@ apiRouter.post("/login", async (req, res) => {
   }
 });
 
+// Cookies library needed to enable destruction of connect.sid cookie on client side
 const Cookies = require("js-cookie");
 // logout endpoint
 apiRouter.post("/logout", (req, res) => {
@@ -121,9 +103,6 @@ apiRouter.post("/logout", (req, res) => {
   res.status(200).json({ url: `${process.env.FRONTEND_URL}/` });
 });
 
-apiRouter.use("/users", usersRouter);
-apiRouter.use("/dishes", checkAuthentication, dishesRouter);
-apiRouter.use("/appliances", checkAuthentication, appliancesRouter);
-apiRouter.use("/meals", checkAuthentication, mealsRouter);
+apiRouter.use("/example", exampleRouter);
 
 module.exports = apiRouter;
